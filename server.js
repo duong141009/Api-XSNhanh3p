@@ -96,8 +96,7 @@ app.get('/api/tong', async (req, res) => {
 app.get('/api/full', async (req, res) => {
   try {
     const response = await axios.get(BASE_API);
-    const data = response.data.data;
-    res.json(data);
+    res.json(response.data.data);
   } catch (err) {
     res.status(500).json({ error: 'Lỗi lấy full dữ liệu' });
   }
