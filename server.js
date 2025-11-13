@@ -1,4 +1,3 @@
-// server.js
 const express = require('express');
 const axios = require('axios');
 const fs = require('fs');
@@ -30,6 +29,7 @@ function updateHistoryFile(filename, newEntry) {
   }
 }
 
+// Trang chủ giới thiệu endpoint
 app.get('/', (req, res) => {
   res.send(`
     <h1>🎯 API XS Nhanh 3P HAY88</h1>
@@ -50,6 +50,7 @@ app.get('/', (req, res) => {
   `);
 });
 
+// Lấy từng bóng
 app.get('/api/ball/:pos', async (req, res) => {
   const pos = parseInt(req.params.pos);
   if (pos < 1 || pos > 5) return res.status(400).json({ error: 'Chỉ hỗ trợ bóng 1 đến 5' });
@@ -73,6 +74,7 @@ app.get('/api/ball/:pos', async (req, res) => {
   }
 });
 
+// Lấy tổng
 app.get('/api/tong', async (req, res) => {
   try {
     const response = await axios.get(BASE_API);
@@ -93,6 +95,7 @@ app.get('/api/tong', async (req, res) => {
   }
 });
 
+// Lấy full thô
 app.get('/api/full', async (req, res) => {
   try {
     const response = await axios.get(BASE_API);
@@ -102,13 +105,17 @@ app.get('/api/full', async (req, res) => {
   }
 });
 
+// Lịch sử tất cả (MỚI → CŨ, KHÔNG GIỚI HẠN)
 app.get('/api/history/:target', (req, res) => {
   const { target } = req.params;
   const allowed = ['tong', 'ball1', 'ball2', 'ball3', 'ball4', 'ball5'];
   if (!allowed.includes(target)) return res.status(400).json({ error: 'Không hợp lệ' });
-  res.json(loadFile(`${target}.json`).slice(-50));
+
+  const reversed = loadFile(`${target}.json`).reverse();
+  res.json(reversed);
 });
 
+// Tải từng file
 app.get('/api/download/:target', (req, res) => {
   const { target } = req.params;
   const filePath = path.join(__dirname, 'data', `${target}.json`);
@@ -118,6 +125,7 @@ app.get('/api/download/:target', (req, res) => {
   res.download(filePath);
 });
 
+// Tải tất cả
 app.get('/api/download/all', (req, res) => {
   const archive = archiver('zip', { zlib: { level: 9 } });
   res.attachment('xsnhanh3p-data.zip');
